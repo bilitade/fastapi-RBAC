@@ -41,11 +41,17 @@ async def upload_file(
     
     # Save file
     storage = FileStorage()
-    file_metadata = await storage.save_file(
-        file=file,
-        user_id=current_user.id,
-        category=category
-    )
+    try:
+        file_metadata = await storage.save_file(
+            file=file,
+            user_id=current_user.id,
+            category=category
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail=str(e)
+        )
     
     # Index if requested
     indexed = False

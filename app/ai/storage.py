@@ -1,6 +1,4 @@
 """Simple file storage service."""
-import os
-import shutil
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, List, Dict, Any
@@ -13,8 +11,9 @@ class FileStorage:
     
     def __init__(self):
         """Initialize file storage."""
-        self.upload_dir = Path("data/uploads")
+        self.upload_dir = Path(settings.UPLOAD_DIR)
         self.upload_dir.mkdir(parents=True, exist_ok=True)
+        self.max_size = settings.MAX_UPLOAD_SIZE
     
     async def save_file(
         self,
@@ -33,6 +32,12 @@ class FileStorage:
         Returns:
             File metadata
         """
+        # Read content first to check size
+        content = await file.read()
+        
+        if len(content) > self.max_size:
+            raise ValueError(f"File too large. Max size: {self.max_size / 1024 / 1024}MB")
+        
         # Create user directory
         user_dir = self.upload_dir / str(user_id) / category
         user_dir.mkdir(parents=True, exist_ok=True)
@@ -44,7 +49,6 @@ class FileStorage:
         
         # Save file
         with open(filepath, "wb") as f:
-            content = await file.read()
             f.write(content)
         
         # Get file info

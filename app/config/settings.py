@@ -70,7 +70,11 @@ class Settings(BaseSettings):
         description="Max tokens for AI responses"
     )
     
-    # Vector Store Configuration
+    # Storage Configuration
+    UPLOAD_DIR: str = Field(
+        default="./data/uploads",
+        description="Directory for file uploads"
+    )
     VECTOR_STORE_PATH: str = Field(
         default="./data/vectorstore",
         description="Path to vector store data"
@@ -78,6 +82,10 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL: str = Field(
         default="text-embedding-ada-002",
         description="Embedding model for vector store"
+    )
+    MAX_UPLOAD_SIZE: int = Field(
+        default=10 * 1024 * 1024,  # 10MB
+        description="Maximum file upload size in bytes"
     )
     
     model_config = SettingsConfigDict(
