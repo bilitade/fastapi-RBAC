@@ -54,5 +54,11 @@ def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User account is inactive",
+        )
+    
     return user
 

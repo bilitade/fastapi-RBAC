@@ -1,6 +1,6 @@
 """User model with role relationships."""
 from typing import TYPE_CHECKING
-from sqlalchemy import Column, Integer, String, Table, ForeignKey
+from sqlalchemy import Column, Integer, String, Table, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from app.db.base import Base
 
@@ -28,8 +28,20 @@ class User(Base):
     __tablename__ = "users"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    
+    # Personal Information
+    first_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    middle_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    last_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    role_title: Mapped[str] = mapped_column(String(100), nullable=True)
+    
+    # Authentication
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
+    
+    # Account Status
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    is_approved: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     
     # Relationships
     roles: Mapped[list["Role"]] = relationship(

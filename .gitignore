@@ -60,7 +60,6 @@ htmlcov/
 .dmypy.json
 dmypy.json
 
-# Alembic
-alembic/versions/*.py
-!alembic/versions/__init__.py
-
+# Alembic (if you add it later)
+# alembic/versions/*.py
+# !alembic/versions/__init__.py

@@ -92,27 +92,37 @@ def create_roles(db: Session) -> None:
 
 
 def create_default_users(db: Session) -> None:
-    """
-    Create default users with assigned roles.
-    
-    Args:
-        db: Database session
-    """
+    """Create default admin users with assigned roles."""
     default_users = [
         {
+            "first_name": "Super",
+            "middle_name": "Admin",
+            "last_name": "User",
+            "role_title": "System Administrator",
             "email": "superadmin@example.com",
             "password": "SuperAdmin123!",
-            "role": "superadmin"
+            "role": "superadmin",
+            "is_approved": True
         },
         {
+            "first_name": "Admin",
+            "middle_name": "System",
+            "last_name": "User",
+            "role_title": "Administrator",
             "email": "admin@example.com",
             "password": "Admin123!",
-            "role": "admin"
+            "role": "admin",
+            "is_approved": True
         },
         {
+            "first_name": "Normal",
+            "middle_name": "Test",
+            "last_name": "User",
+            "role_title": "User",
             "email": "user@example.com",
             "password": "User123!",
-            "role": "normal"
+            "role": "normal",
+            "is_approved": True
         },
     ]
     
@@ -121,16 +131,20 @@ def create_default_users(db: Session) -> None:
         existing = db.query(User).filter(User.email == user_data["email"]).first()
         
         if not existing:
-            # Create user
             user = User(
+                first_name=user_data["first_name"],
+                middle_name=user_data["middle_name"],
+                last_name=user_data["last_name"],
+                role_title=user_data.get("role_title"),
                 email=user_data["email"],
-                password=hash_password(user_data["password"])
+                password=hash_password(user_data["password"]),
+                is_active=True,
+                is_approved=user_data.get("is_approved", False)
             )
             db.add(user)
             db.commit()
             db.refresh(user)
             
-            # Assign role
             role = db.query(Role).filter(Role.name == user_data["role"]).first()
             if role:
                 user.roles.append(role)

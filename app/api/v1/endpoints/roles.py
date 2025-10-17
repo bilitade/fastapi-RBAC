@@ -69,14 +69,14 @@ def list_roles(
     return roles
 
 
-@router.put("/{role_id}", response_model=RoleResponse)
+@router.patch("/{role_id}", response_model=RoleResponse)
 def update_role(
     role_id: int,
     role_data: RoleUpdate,
     db: Session = Depends(get_db),
     _: bool = Depends(require_permission("manage_roles"))
 ) -> Any:
-    """Update role details (requires 'manage_roles' permission)."""
+    """Admin: Update role (partial, requires 'manage_roles' permission)."""
     role = db.query(Role).filter(Role.id == role_id).first()
     if not role:
         raise HTTPException(

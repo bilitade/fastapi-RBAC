@@ -2,6 +2,8 @@
 
 A production-ready **Role-Based Access Control (RBAC)** system built with FastAPI, featuring JWT authentication, permission-based authorization, and a clean, scalable architecture.
 
+> 📚 **[Complete Documentation](docs/)** | 🚀 **[API Examples](docs/API_EXAMPLES.md)** | ⚡ **[Quick Reference](docs/QUICK_REFERENCE.md)**
+
 ## ✨ Features
 
 - 🔐 **JWT Authentication** with refresh token rotation
