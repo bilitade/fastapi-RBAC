@@ -63,3 +63,7 @@ dmypy.json
 # Alembic (if you add it later)
 # alembic/versions/*.py
 # !alembic/versions/__init__.py
+
+# File uploads and vector store
+data/uploads/
+data/vectorstore/

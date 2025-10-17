@@ -41,6 +41,45 @@ class Settings(BaseSettings):
     
     LOG_LEVEL: str = Field(default="INFO", description="Logging level")
     
+    # AI Configuration
+    AI_PROVIDER: str = Field(
+        default="openai",
+        description="AI provider: openai, anthropic, or custom"
+    )
+    OPENAI_API_KEY: Optional[str] = Field(
+        default=None,
+        description="OpenAI API key"
+    )
+    ANTHROPIC_API_KEY: Optional[str] = Field(
+        default=None,
+        description="Anthropic API key"
+    )
+    AI_MODEL: str = Field(
+        default="gpt-3.5-turbo",
+        description="Default AI model to use"
+    )
+    AI_TEMPERATURE: float = Field(
+        default=0.7,
+        ge=0.0,
+        le=2.0,
+        description="AI temperature for responses"
+    )
+    AI_MAX_TOKENS: int = Field(
+        default=1000,
+        ge=1,
+        description="Max tokens for AI responses"
+    )
+    
+    # Vector Store Configuration
+    VECTOR_STORE_PATH: str = Field(
+        default="./data/vectorstore",
+        description="Path to vector store data"
+    )
+    EMBEDDING_MODEL: str = Field(
+        default="text-embedding-ada-002",
+        description="Embedding model for vector store"
+    )
+    
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

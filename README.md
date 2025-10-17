@@ -6,15 +6,28 @@ A production-ready **Role-Based Access Control (RBAC)** system built with FastAP
 
 ## ✨ Features
 
+### Authentication & Authorization
 - 🔐 **JWT Authentication** with refresh token rotation
 - 👥 **Role-Based Access Control** with fine-grained permissions
 - 🛡️ **Secure Password Hashing** using Argon2
-- 📝 **Comprehensive API Documentation** (Swagger/ReDoc)
-- 🏗️ **Clean Architecture** following FastAPI best practices
 - 🔄 **Token Rotation** for enhanced security
+- ✅ **User Approval Workflow** with activation controls
+
+### AI Assistant 🤖 **NEW**
+- 💬 **Intelligent Chat** - Context-aware conversations
+- 💡 **Idea Generation** - Creative brainstorming
+- ✨ **Content Enhancement** - Improve, expand, or summarize text
+- 🎯 **Auto-Fill** - Smart form field suggestions
+- 📚 **Document Search** - Semantic search with RAG
+- 🔌 **Multi-LLM Support** - OpenAI, Anthropic, extensible
+
+### Developer Experience
+- 📝 **Complete User Profiles** - Name, title, email
+- 🏗️ **Clean Architecture** following FastAPI best practices
 - 📊 **PostgreSQL** support (SQLite for development)
 - ✅ **Type Safety** with Python type hints and Pydantic v2
 - 🧪 **Production Ready** with proper error handling
+- 📖 **Comprehensive Documentation** (Swagger/ReDoc)
 
 ## 🏗️ Architecture
 
@@ -24,10 +37,11 @@ app/
 │   └── v1/
 │       ├── api.py              # API router aggregator
 │       └── endpoints/          # API endpoints
-│           ├── auth.py         # Authentication endpoints
+│           ├── auth.py         # Authentication
 │           ├── users.py        # User management
 │           ├── roles.py        # Role management
-│           └── permissions.py  # Permission management
+│           ├── permissions.py  # Permission management
+│           └── ai.py           # AI assistant 🤖
 ├── config/
 │   └── settings.py             # Configuration management
 ├── core/
@@ -36,21 +50,32 @@ app/
 ├── db/
 │   ├── base.py                 # Database base class
 │   └── session.py              # Database session
+├── ai/                         # AI assistant module 🤖
+│   ├── services/              # AI services
+│   │   ├── llm_factory.py    # Provider-agnostic LLM
+│   │   ├── chat_service.py   # Chat functionality
+│   │   ├── content_service.py # Content generation
+│   │   ├── document_service.py # Document RAG
+│   │   └── agent_service.py  # AI agent
+│   ├── tools/                # Custom LangChain tools
+│   └── chains/               # LangChain chains
 ├── middleware/
-│   └── rbac.py                 # RBAC decorators
-├── models/                     # SQLAlchemy models
+│   └── rbac.py               # RBAC decorators
+├── models/                   # SQLAlchemy models
 │   ├── user.py
 │   ├── role.py
 │   ├── permission.py
 │   └── token.py
-├── schemas/                    # Pydantic schemas
+├── schemas/                  # Pydantic schemas
 │   ├── user.py
 │   ├── role.py
 │   ├── permission.py
-│   └── token.py
+│   ├── token.py
+│   └── ai.py                # AI schemas 🤖
 ├── scripts/
-│   └── init_db.py              # Database initialization
-└── main.py                     # FastAPI application
+│   ├── init_db.py           # Database initialization
+│   └── index_documents.py   # Document indexing 🤖
+└── main.py                  # FastAPI application
 ```
 
 ## 🚀 Quick Start
@@ -91,12 +116,21 @@ app/
    python -m app.scripts.init_db
    ```
 
-6. **Run the application**
+6. **Configure AI (Optional)**
+   ```bash
+   # Add to .env
+   OPENAI_API_KEY="sk-your-key-here"
+   
+   # Index documents for AI search
+   python -m app.scripts.index_documents ./docs
+   ```
+
+7. **Run the application**
    ```bash
    uvicorn app.main:app --reload
    ```
 
-7. **Access the API documentation**
+8. **Access the API documentation**
    - Swagger UI: http://localhost:8000/docs
    - ReDoc: http://localhost:8000/redoc
 
