@@ -1,6 +1,7 @@
 """Application configuration with environment variable support."""
 from typing import List, Optional
 import secrets
+import warnings
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, field_validator, model_validator
 
@@ -66,8 +67,11 @@ class Settings(BaseSettings):
                         "SECURITY ERROR: Wildcard CORS origin (*) not allowed in production"
                     )
                 if "localhost" in origin or "127.0.0.1" in origin:
-                    raise ValueError(
-                        f"SECURITY WARNING: localhost origin '{origin}' detected in production mode"
+                    warnings.warn(
+                        f"SECURITY WARNING: localhost origin '{origin}' detected in production mode. "
+                        f"This should be replaced with your actual domain in production.",
+                        UserWarning,
+                        stacklevel=2
                     )
         
         return self
