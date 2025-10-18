@@ -7,6 +7,7 @@ from app.db.base import Base
 if TYPE_CHECKING:
     from app.models.role import Role
     from app.models.token import RefreshToken
+    from app.models.password_reset import PasswordResetToken
 
 
 user_roles = Table(
@@ -52,6 +53,11 @@ class User(Base):
     )
     refresh_tokens: Mapped[list["RefreshToken"]] = relationship(
         "RefreshToken",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    password_reset_tokens: Mapped[list["PasswordResetToken"]] = relationship(
+        "PasswordResetToken",
         back_populates="user",
         cascade="all, delete-orphan"
     )

@@ -10,4 +10,5 @@ def import_models() -> None:
     from app.models.role import Role  # noqa: F401
     from app.models.permission import Permission  # noqa: F401
     from app.models.token import RefreshToken  # noqa: F401
+    from app.models.password_reset import PasswordResetToken  # noqa: F401
 

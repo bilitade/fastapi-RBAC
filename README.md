@@ -12,6 +12,8 @@ A production-ready **Role-Based Access Control (RBAC)** system built with FastAP
 - 🛡️ **Secure Password Hashing** using Argon2
 - 🔄 **Token Rotation** for enhanced security
 - ✅ **User Approval Workflow** with activation controls
+- 📧 **Email System** - Password reset, notifications, welcome emails
+- 🔑 **Password Management** - Reset flow & authenticated password change
 
 ### Security Features 🔒 **ENHANCED**
 - 🚦 **Rate Limiting** - Prevents brute force attacks (5 login attempts/min)

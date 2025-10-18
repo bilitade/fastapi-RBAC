@@ -74,6 +74,59 @@ class Settings(BaseSettings):
     
     LOG_LEVEL: str = Field(default="INFO", description="Logging level")
     
+    # Email Configuration
+    MAIL_USERNAME: str = Field(
+        default="",
+        description="Email username/address for sending emails"
+    )
+    MAIL_PASSWORD: str = Field(
+        default="",
+        description="Email password or app-specific password"
+    )
+    MAIL_FROM: str = Field(
+        default="noreply@example.com",
+        description="Default sender email address"
+    )
+    MAIL_FROM_NAME: str = Field(
+        default="RBAC API",
+        description="Default sender name"
+    )
+    MAIL_PORT: int = Field(
+        default=587,
+        description="SMTP port (587 for TLS, 465 for SSL)"
+    )
+    MAIL_SERVER: str = Field(
+        default="smtp.gmail.com",
+        description="SMTP server address"
+    )
+    MAIL_STARTTLS: bool = Field(
+        default=True,
+        description="Use STARTTLS for email encryption"
+    )
+    MAIL_SSL_TLS: bool = Field(
+        default=False,
+        description="Use SSL/TLS for email encryption"
+    )
+    USE_CREDENTIALS: bool = Field(
+        default=True,
+        description="Use credentials for SMTP authentication"
+    )
+    VALIDATE_CERTS: bool = Field(
+        default=True,
+        description="Validate SSL certificates"
+    )
+    
+    # Password Reset Configuration
+    PASSWORD_RESET_TOKEN_EXPIRE_MINUTES: int = Field(
+        default=30,
+        ge=5,
+        description="Password reset token expiration in minutes"
+    )
+    FRONTEND_URL: str = Field(
+        default="http://localhost:3000",
+        description="Frontend URL for password reset links"
+    )
+    
     # AI Configuration
     AI_PROVIDER: str = Field(
         default="openai",
