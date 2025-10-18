@@ -17,6 +17,7 @@ from app.ai.llm_factory import LLMFactory
 from app.core.dependencies import get_current_user
 from app.models.user import User
 from app.config import settings
+from app.middleware.input_sanitizer import InputSanitizer
 
 router = APIRouter()
 
@@ -38,6 +39,12 @@ async def chat(
     """Chat with AI assistant."""
     check_ai_configured()
     
+    # Sanitize inputs
+    message = InputSanitizer.sanitize_ai_prompt(request.message, "message")
+    system_prompt = None
+    if request.system_prompt:
+        system_prompt = InputSanitizer.sanitize_ai_prompt(request.system_prompt, "system_prompt")
+    
     ai = AIService()
     
     user_context = {
@@ -45,11 +52,11 @@ async def chat(
         "role": current_user.role_title or "User",
     }
     if request.context:
-        user_context.update(request.context)
+        user_context.update(InputSanitizer.sanitize_dict(request.context))
     
     response = await ai.chat(
-        message=request.message,
-        system_prompt=request.system_prompt,
+        message=message,
+        system_prompt=system_prompt,
         context=user_context
     )
     
@@ -64,10 +71,16 @@ async def generate_idea(
     """Generate creative ideas on a topic."""
     check_ai_configured()
     
+    # Sanitize inputs
+    topic = InputSanitizer.sanitize_text(request.topic, max_length=500, field_name="topic")
+    context = None
+    if request.context:
+        context = InputSanitizer.sanitize_ai_prompt(request.context, "context")
+    
     ai = AIService()
     result = await ai.generate_ideas(
-        topic=request.topic,
-        context=request.context
+        topic=topic,
+        context=context
     )
     
     return {"result": result, "model": settings.AI_MODEL}
@@ -81,9 +94,12 @@ async def enhance_content(
     """Enhance content: improve, expand, summarize, professional."""
     check_ai_configured()
     
+    # Sanitize inputs
+    content = InputSanitizer.sanitize_ai_prompt(request.content, "content")
+    
     ai = AIService()
     result = await ai.enhance_content(
-        content=request.content,
+        content=content,
         instruction=request.enhancement_type
     )
     
@@ -98,10 +114,14 @@ async def auto_fill(
     """Get smart auto-fill suggestions."""
     check_ai_configured()
     
+    # Sanitize inputs
+    field_name = InputSanitizer.sanitize_field_name(request.field_name)
+    existing_data = InputSanitizer.sanitize_dict(request.existing_data)
+    
     ai = AIService()
     result = await ai.auto_fill(
-        field_name=request.field_name,
-        existing_data=request.existing_data
+        field_name=field_name,
+        existing_data=existing_data
     )
     
     return {"result": result, "model": settings.AI_MODEL}
@@ -115,8 +135,11 @@ async def search_documents(
     """Search documents using semantic search."""
     check_ai_configured()
     
+    # Sanitize inputs
+    query = InputSanitizer.sanitize_text(request.query, max_length=500, field_name="query")
+    
     docs = DocumentSearch()
-    results = await docs.search(request.query, k=request.max_results)
+    results = await docs.search(query, k=request.max_results)
     
     formatted = [
         {

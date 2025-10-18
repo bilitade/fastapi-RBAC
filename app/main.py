@@ -13,6 +13,8 @@ from app.config import settings
 from app.api.v1.api import api_router
 from app.db.base import Base, import_models
 from app.db.session import engine
+from app.middleware.rate_limit import RateLimitMiddleware
+from app.middleware.security_headers import SecurityHeadersMiddleware
 
 # Register all models with SQLAlchemy
 import_models()
@@ -41,12 +43,23 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
+# Security middleware (order matters - first added is executed last)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.BACKEND_CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+# Add security headers to all responses
+app.add_middleware(SecurityHeadersMiddleware)
+
+# Add rate limiting to prevent brute force attacks
+app.add_middleware(
+    RateLimitMiddleware,
+    requests_per_minute=60,  # General rate limit
+    requests_per_hour=1000
 )
 
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)

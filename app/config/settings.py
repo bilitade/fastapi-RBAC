@@ -1,7 +1,8 @@
 """Application configuration with environment variable support."""
 from typing import List, Optional
+import secrets
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 
 
 class Settings(BaseSettings):
@@ -14,7 +15,8 @@ class Settings(BaseSettings):
     
     SECRET_KEY: str = Field(
         default="your-secret-key-change-in-production",
-        description="JWT signing key - must be changed in production"
+        description="JWT signing key - must be changed in production",
+        min_length=32
     )
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=60, ge=1)
@@ -38,6 +40,37 @@ class Settings(BaseSettings):
         if isinstance(v, str):
             return [origin.strip() for origin in v.split(",") if origin.strip()]
         return v
+    
+    @model_validator(mode="after")
+    def validate_security_settings(self) -> "Settings":
+        """Validate critical security settings."""
+        # Check if default secret key is being used in production
+        if not self.DEBUG and self.SECRET_KEY == "your-secret-key-change-in-production":
+            raise ValueError(
+                "CRITICAL SECURITY ERROR: Default SECRET_KEY detected in production mode. "
+                "Generate a secure key using: python -c 'import secrets; print(secrets.token_urlsafe(32))'"
+            )
+        
+        # Ensure secret key is strong enough
+        if len(self.SECRET_KEY) < 32:
+            raise ValueError(
+                "SECRET_KEY must be at least 32 characters long for security. "
+                "Generate a secure key using: python -c 'import secrets; print(secrets.token_urlsafe(32))'"
+            )
+        
+        # Validate CORS origins in production
+        if not self.DEBUG:
+            for origin in self.BACKEND_CORS_ORIGINS:
+                if origin == "*":
+                    raise ValueError(
+                        "SECURITY ERROR: Wildcard CORS origin (*) not allowed in production"
+                    )
+                if "localhost" in origin or "127.0.0.1" in origin:
+                    raise ValueError(
+                        f"SECURITY WARNING: localhost origin '{origin}' detected in production mode"
+                    )
+        
+        return self
     
     LOG_LEVEL: str = Field(default="INFO", description="Logging level")
     
